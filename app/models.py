@@ -22,6 +22,9 @@ class User(UserMixin,db.Model):
     profile_pic_path = db.Column(db.String())
     password_hash = db.Column(db.String(255))
 
+    pitches = db.relationship('Pitch',backref = 'user',lazy = "dynamic")
+    comments = db.relationship('Comment',backref = 'user',lazy = "dynamic")
+
     @property
     def password(self):
         raise AttributeError('You cannot read the password attribute')
@@ -47,6 +50,7 @@ class Role(db.Model):
     name = db.Column(db.String(255))
     users = db.relationship('User',backref = 'role',lazy="dynamic")
 
+
     def __repr__(self):
         return f'User {self.name}'
 
@@ -60,6 +64,30 @@ class Pitch(db.Model):
     posted = db.Column(db.DateTime,default=datetime.utcnow)
 
     writer = db.Column(db.Integer,db.ForeignKey("users.id"))
+    comments = db.relationship('Comment',backref = 'pitch',lazy = "dynamic")
+
+    def save_pitch(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+    @classmethod
+    def get_pitch(cls,id):
+        pitches = Pitch.query.filter_by(id=id).all()
+        return pitches
+
+    @classmethod
+    def get_all_pitches(cls):
+        pitches = Pitch.query.order_by('-id').all()
+        return pitches
+
+
+    def __repr__(self):
+        return f'Pitch {self.pitch_title}'
+
+
+
+
 
 
 # class Comment(db.Model):
