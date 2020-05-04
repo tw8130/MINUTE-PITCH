@@ -67,17 +67,28 @@ class Pitch(db.Model):
     comments = db.relationship('Comment',backref = 'pitch',lazy = "dynamic")
 
     def save_pitch(self):
+        '''
+        Function that saves pitches
+        '''
         db.session.add(self)
         db.session.commit()
 
 
     @classmethod
     def get_pitch(cls,id):
+        '''
+        Function that queries the databse and returns pitches based on the
+        pitch id passed to it
+        '''
+
         pitches = Pitch.query.filter_by(id=id).all()
         return pitches
 
     @classmethod
     def get_all_pitches(cls):
+        '''
+        Function that queries the databse and returns all the pitches
+        '''
         pitches = Pitch.query.order_by('-id').all()
         return pitches
 
@@ -93,3 +104,5 @@ class Comment(db.Model):
     comment_content = db.Column(db.String())
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+
+

@@ -41,12 +41,6 @@
       <a class="btn btn-success" href="{{url_for('main.update_profile',uname=user.username)}}">Edit Bio</a>
       {% endif %}
     </div>
-    <div class="" style="padding-left: 30%;">
-      <h1 style="padding-left: 10%;">POST YOUR PITCH</h1>
-      {{wtf.quick_form(form)}}
-
-      {{form.csrf_token}}
-    </div>
   </div>
 </body>
 {% endblock %}

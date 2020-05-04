@@ -16,16 +16,27 @@ def index():
 
 @main.route('/user/<uname>')
 def profile(uname):
+    '''
+    View profile page function that returns the profile page and its data
+    '''
     user = User.query.filter_by(username = uname).first()
+    title = f"{uname.capitalize()}'s Profile"
+
+    get_pitches = Pitch.query.filter_by(author = User.id).all()
+    get_comments = Comment.query.filter_by(user_id = User.id).all()
+
 
     if user is None:
         abort(404)
 
-    return render_template("profile/profile.html", user = user)
+    return render_template("profile/profile.html", user = user,pitches_no = get_pitches, comments_no = get_comments)
 
 @main.route('/user/<uname>/update',methods = ['GET','POST'])
 @login_required
 def update_profile(uname):
+    '''
+    View update profile page function that returns the update profile page and its data
+    '''
     user = User.query.filter_by(username = uname).first()
     if user is None:
         abort(404)
@@ -45,6 +56,9 @@ def update_profile(uname):
 @main.route('/user/<uname>/update/pic',methods= ['POST'])
 @login_required
 def update_pic(uname):
+    '''
+    View update pic profile function that returns the uppdate profile pic page
+    '''
     user = User.query.filter_by(username = uname).first()
     if 'photo' in request.files:
         filename = photos.save(request.files['photo'])
