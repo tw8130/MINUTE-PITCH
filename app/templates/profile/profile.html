@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+
+<body class="container-fluid" style="background:#D6C7C7;">
+  <div class="container">
+    <!-- displaying  Username-->
+    <div style="background:rgb(224, 227, 230);float:left;width: 25%;padding: 5%;border-radius: 5%;">
+
+      <!--Display profile photo-->
+
+      {% if user.profile_pic_path %}
+      <img src="{{url_for('static',filename=user.profile_pic_path)}}" alt="" class="img-thumbnail">
+      {%else%}
+      <h3>No profile picture</h3>
+      {% endif %}
+
+      <div>
+        {% if user == current_user %}
+    <form  action="{{url_for('main.update_pic',uname=user.username)}}" method="post" enctype = "multipart/form-data">
+
+      <input type="file"  name="photo" class="form-control " required>
+      <input type="submit" class="btn btn-success">
+    </form>
+      {% endif %}
+  </div>
+
+      <h4>Name: {{user.username| capitalize}} </h4>
+
+      <!--Displaying user bio-->
+
+      {% if user.bio %}
+      <h4>Bio:</h4>
+      <em> {{user.bio}}</em>
+      {%else%}
+      <p> {{user.username| capitalize}} has no bio </p>
+      {% endif %}
+
+      {% if user == current_user %}
+      <a class="btn btn-success" href="{{url_for('main.update_profile',uname=user.username)}}">Edit Bio</a>
+      {% endif %}
+    </div>
+    <div class="" style="padding-left: 30%;">
+      <h1 style="padding-left: 10%;">POST YOUR PITCH</h1>
+      {{wtf.quick_form(form)}}
+
+      {{form.csrf_token}}
+    </div>
+  </div>
+</body>
+{% endblock %}
