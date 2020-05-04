@@ -78,7 +78,7 @@ class Pitch(db.Model):
     def get_pitch(cls,id):
         '''
         Function that queries the databse and returns pitches based on the
-        pitch id passed to it
+        id passed to it
         '''
 
         pitches = Pitch.query.filter_by(id=id).all()
@@ -104,5 +104,35 @@ class Comment(db.Model):
     comment_content = db.Column(db.String())
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+
+    def save_comment(self):
+        '''
+        Function that saves comments
+        '''
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def clear_comments(cls):
+        Comment.all_comments.clear()
+
+    @classmethod
+    def get_comments(cls,id):
+        '''
+        Method that queries the database and returns the comments based on pitch_id
+        '''
+        comments = Comment.query.filter_by(pitch_id=id).all()
+
+        return comments
+    
+     @classmethod
+    def get_all_comments(cls,id):
+        '''
+        Method that queries database and returns all comments saved
+        '''
+        comments = Comment.query.order_by('id').all()
+        return comments
+
+
 
 
