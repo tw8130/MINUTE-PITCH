@@ -278,3 +278,22 @@ def displaygeneral(id):
 
     review = ReviewGeneral.query.filter_by(general_id=id).all()
     return render_template('genpitch.html', general=general, review_form=form, review=review)
+
+@main.route('/user/rating')
+@login_required
+def ratings():
+    upvote = Upvote(user=current_user)
+    upvote.save_upvote()
+    votes = db.session.query(func.sum(Upvote.upvote)).scalar()
+    votes = str(votes)
+    return votes
+
+
+@main.route('/user/rating')
+@login_required
+def rating():
+    downvote = Downvote(user=current_user)
+    downvote.save_downvote()
+    votes = db.session.query(func.sum(Downvote.downvote)).scalar()
+    votes = str(votes)
+    return votes
