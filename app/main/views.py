@@ -169,3 +169,57 @@ def dislike(pitch_id):
     new_dislike = Dislike(pitch_id=pitch_id, user = current_user)
     new_dislike.save_dislikes()
     return redirect(url_for('.index'))
+
+@main.route('/user/category/advertisement', methods=['GET', 'POST'])
+@login_required
+def advertisement():
+    form = AdvertisementForm()
+    title = 'Post a pitch'
+    if form.validate_on_submit():
+        post = form.post.data
+        body = form.body.data
+        new_advertisement = Advertisement(post=post, user=current_user, body=body)
+        new_advertisement.save_advertisement()
+        return redirect(url_for('.advertisements'))
+    return render_template("advertisement.html", advertisement_form=form, title=title)
+
+@main.route('/user/category/project', methods=['GET', 'POST'])
+@login_required
+def project():
+    form = ProjectForm()
+    title = 'Post a pitch'
+    if form.validate_on_submit():
+        post = form.post.data
+        body = form.body.data
+        new_project = Project(post=post, user=current_user, body=body)
+        new_project.save_project()
+        return redirect(url_for('.projects'))
+    return render_template("project.html", project_form=form, title=title)
+
+@main.route('/user/category/sale', methods=['GET', 'POST'])
+@login_required
+def sale():
+    form = SaleForm()
+    title = 'Post a pitch'
+    if form.validate_on_submit():
+        post = form.post.data
+        body = form.body.data
+        new_sale = Sale(post=post, user=current_user, body=body)
+        new_sale.save_sale()
+        return redirect(url_for('.sales'))
+    return render_template("sale.html", sale_form=form, title = title)
+
+
+@main.route('/user/category/general', methods=['GET', 'POST'])
+@login_required
+def general():
+    form = GeneralForm()
+    title = 'Post a pitch'
+    if form.validate_on_submit():
+        post = form.post.data
+        body = form.body.data
+        new_general = General(post=post, user=current_user, body=body)
+        new_general.save_general()
+        return redirect(url_for('.generals'))
+    return render_template("general.html", general_form=form, title=title)
+
