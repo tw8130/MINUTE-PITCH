@@ -24,6 +24,9 @@ class User(UserMixin,db.Model):
 
     pitches = db.relationship('Pitch',backref = 'user',lazy = "dynamic")
     comments = db.relationship('Comment',backref = 'user',lazy = "dynamic")
+     ikes = db.relationship('Like',backref = 'user',lazy = "dynamic")
+    dislikes = db.relationship('Dislike',backref = 'user',lazy = "dynamic")
+
 
     @property
     def password(self):
@@ -65,6 +68,9 @@ class Pitch(db.Model):
 
     writer = db.Column(db.Integer,db.ForeignKey("users.id"))
     comments = db.relationship('Comment',backref = 'pitch',lazy = "dynamic")
+    likes = db.relationship('Like',backref = 'pitch',lazy = "dynamic")
+    dislikes = db.relationship('Dislike',backref = 'pitch',lazy = "dynamic")
+
 
     def save_pitch(self):
         '''
@@ -140,6 +146,21 @@ class Like (db.Model):
     like = db.Column(db.Integer,default=1)
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+
+    def __repr__(self):
+        return f'{self.user_id}:{self.pitch_id}'
+
+class Dislike (db.Model):
+    __tablename__ = 'dislikes'
+
+    id = db.Column(db.Integer,primary_key=True)
+    dislike = db.Column(db.Integer,default=1)
+    pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+
+
+    def __repr__(self):
+        return f'{self.user_id}:{self.pitch_id}'
 
 
 
