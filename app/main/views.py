@@ -223,3 +223,58 @@ def general():
         return redirect(url_for('.generals'))
     return render_template("general.html", general_form=form, title=title)
 
+@main.route('/user/advertisement/<int:id>', methods=['POST', 'GET'])
+@login_required
+def displayadvertisement(id):
+    advertisement = Advertisement.query.get(id)
+    form = AdvertisementReviewForm()
+    if form.validate_on_submit():
+        review = form.review.data
+        new_advertisementreview = ReviewAdvertisement(
+            review=review, advertisement_id=id, user=current_user)
+        new_advertisementreview.save_reviewadvertisement()
+
+    review = ReviewAdvertisement.query.filter_by(advertisement_id=id).all()
+    return render_template('advertpitch.html', advertisement=advertisement, review_form=form, review=review)
+
+@main.route('/user/project/<int:id>', methods=['POST', 'GET'])
+@login_required
+def displayproject(id):
+    project = Project.query.get(id)
+    form = ProjectReviewForm()
+    if form.validate_on_submit():
+        review = form.review.data
+        new_projectreview = ReviewProject(
+            review=review, project_id=id, user=current_user)
+        new_projectreview.save_reviewproject()
+
+    review = ReviewProject.query.filter_by(project_id=id).all()
+    return render_template('projectpitch.html', project=project, review_form=form, review=review)
+
+@main.route('/user/sale/<int:id>', methods=['GET', 'POST'])
+@login_required
+def displaysale(id):
+    sale = Sale.query.get(id)
+    form = SaleReviewForm()
+    if form.validate_on_submit():
+        review = form.review.data
+        new_salereview = ReviewSale(
+            review=review, sale_id=id, user=current_user)
+        new_salereview.save_reviewsale()
+
+    review = ReviewSale.query.filter_by(sale_id=id).all()
+    return render_template('salepitch.html', sale=sale, review_form=form, review=review)
+
+@main.route('/user/general/<int:id>', methods=['GET', 'POST'])
+@login_required
+def displaygeneral(id):
+    general = General.query.get(id)
+    form = GeneralReviewForm()
+    if form.validate_on_submit():
+        review = form.review.data
+        new_generalreview = ReviewGeneral(
+            review=review, general_id=id, user=current_user)
+        new_generalreview.save_reviewgeneral()
+
+    review = ReviewGeneral.query.filter_by(general_id=id).all()
+    return render_template('genpitch.html', general=general, review_form=form, review=review)
