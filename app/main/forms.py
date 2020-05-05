@@ -15,3 +15,41 @@ class PitchForm(FlaskForm):
 class CommentForm(FlaskForm):
     comment_content = TextAreaField('Write a comment', validators=[Required()])
     submit = SubmitField('Comment')
+
+class GeneralForm(FlaskForm):
+    post = StringField('Title', validators=[Required()])
+    body = TextAreaField('Post', validators=[Required()])
+    submit = SubmitField('Submit')
+
+class GeneralReviewForm(FlaskForm):
+    review = StringField('Review:',validators=[Required()])
+    submit = SubmitField('Submit')
+
+class ProjectForm(FlaskForm):
+    post = StringField('Title', validators=[Required()])
+    body = TextAreaField('Post', validators=[Required()])
+    submit = SubmitField('Submit')
+
+class ProjectReviewForm(FlaskForm):
+    review = StringField('Review: ', validators=[Required()])
+    submit = SubmitField('Submit')
+
+class AdvertisementForm(FlaskForm):
+    post = StringField('Title', validators=[Required()])
+    body = TextAreaField('Post', validators=[Required()])
+    submit = SubmitField('Submit')
+
+class AdvertisementReviewForm(FlaskForm):
+    review = StringField('Review: ', validators=[Required()])
+    submit = SubmitField('Submit')
+
+class SaleForm(FlaskForm):
+    post = StringField('Title', validators=[Required()])
+    body = TextAreaField('Post', validators=[Required()])
+    submit = SubmitField('Submit')
+
+
+class SaleReviewForm(FlaskForm):
+    review = StringField('Review: ', validators=[Required()])
+    submit = SubmitField('Submit')
+
