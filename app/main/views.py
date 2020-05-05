@@ -66,3 +66,18 @@ def update_pic(uname):
         user.profile_pic_path = path
         db.session.commit()
     return redirect(url_for('main.profile',uname=uname))
+
+@main.route('/home', methods = ['GET', 'POST'])
+@login_required
+def index2():
+    '''
+    View index2 function that returns the home page
+    '''
+    advertisement = Pitch.query.filter_by(category="advertisement").order_by(Pitch.date.desc()).all()
+    project = Pitch.query.filter_by(category="project").order_by(Pitch.date.desc()).all()
+    general = Pitch.query.filter_by(category="general").order_by(Pitch.date.desc()).all()
+    sale = Pitch.query.filter_by(category="sale").order_by(Pitch.date.desc()).all()
+    pitch = Pitch.get_all_pitches()
+
+    title = 'Home | One Min Pitch'
+    return render_template('home.html', title = title, pitch = pitch, advertisement = advertisement, project = project, general = general, sale = sale)
