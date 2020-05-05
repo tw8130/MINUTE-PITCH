@@ -24,7 +24,7 @@ class User(UserMixin,db.Model):
 
     pitches = db.relationship('Pitch',backref = 'user',lazy = "dynamic")
     comments = db.relationship('Comment',backref = 'user',lazy = "dynamic")
-     ikes = db.relationship('Like',backref = 'user',lazy = "dynamic")
+    likes = db.relationship('Like',backref = 'user',lazy = "dynamic")
     dislikes = db.relationship('Dislike',backref = 'user',lazy = "dynamic")
 
 
@@ -131,7 +131,7 @@ class Comment(db.Model):
 
         return comments
     
-     @classmethod
+    @classmethod
     def get_all_comments(cls,id):
         '''
         Method that queries database and returns all comments saved
@@ -147,6 +147,25 @@ class Like (db.Model):
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
+    def save_likes(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def add_likes(cls,id):
+        like_pitch = Like(user = current_user, pitch_id=id)
+        like_pitch.save_likes()
+
+    @classmethod
+    def get_likes(cls,id):
+        like = Like.query.filter_by(pitch_id=id).all()
+        return like
+
+
+    @classmethod
+    def get_all_likes(cls,pitch_id):
+        likes = Like.query.order_by('-id').all()
+        return likes
+
     def __repr__(self):
         return f'{self.user_id}:{self.pitch_id}'
 
@@ -158,6 +177,24 @@ class Dislike (db.Model):
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
+     def save_dislikes(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def add_dislikes(cls,id):
+        dislike_pitch = Dislike(user = current_user, pitch_id=id)
+        dislike_pitch.save_dislikes()
+
+    @classmethod
+    def get_dislikes(cls,id):
+        dislike = Dislike.query.filter_by(pitch_id=id).all()
+        return dislike
+
+
+    @classmethod
+    def get_all_dislikes(cls,pitch_id):
+        dislikes = Dislike.query.order_by('-id').all()
+        return dislikes
 
     def __repr__(self):
         return f'{self.user_id}:{self.pitch_id}'
