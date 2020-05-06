@@ -16,7 +16,7 @@ class UserModelTest(unittest.TestCase):
         '''
         Acsertains if password is being hashed  and if pass_secure contains a value
         '''
-        self.assertTrue(self.new_user.pass_secure is not None)
+        self.assertTrue(self.new_user.password_hash is not None)
     
     def test_no_access_password(self):
         '''

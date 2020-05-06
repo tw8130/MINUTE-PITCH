@@ -1,9 +1,10 @@
-from flask import render_template,request,redirect,url_for,abort
+from flask import render_template,request,redirect,url_for,abort,session
 from . import main
-from .forms import UpdateProfile
+from .forms import UpdateProfile,GeneralForm, GeneralReviewForm, SaleForm, SaleReviewForm,  ProjectForm, ProjectReviewForm, AdvertisementForm, AdvertisementReviewForm,PitchForm,CommentForm
 from .. import db,photos
 from flask_login import login_required,current_user
-from ..models import User
+from ..models import User,Pitch,Comment,Like,Dislike
+from sqlalchemy import desc
 
 @main.route('/')
 def index():
@@ -12,7 +13,20 @@ def index():
     """
     title = 'Home - Welcome to The Pitch website'
 
-    return render_template('index.html', title=title)
+    # import pdb; pdb.set_trace()
+    general = Pitch.query.filter_by(category="general").order_by(Pitch.posted.desc()).all()
+    project = Pitch.query.filter_by(category="project").order_by(Pitch.posted.desc()).all()
+    advertisement = Pitch.query.filter_by(category="advertisement").order_by(Pitch.posted.desc()).all()
+    sale = Pitch.query.filter_by(category="sale").order_by(Pitch.posted.desc()).all()
+
+    pitch = Pitch.query.all()
+    likes = Like.get_all_likes(pitch_id=Pitch.id)
+    dislikes = Dislike.get_all_dislikes(pitch_id=Pitch.id)
+
+
+    title = 'Home - Welcome to The Pitch website'
+    return render_template('index.html', title = title, pitch = pitch, general = general, project = project, advertisement = advertisement, sale = sale, likes=likes, dislikes=dislikes)
+    # return render_template('index.html', title = title)
 
 @main.route('/user/<uname>')
 def profile(uname):
@@ -22,7 +36,7 @@ def profile(uname):
     user = User.query.filter_by(username = uname).first()
     title = f"{uname.capitalize()}'s Profile"
 
-    get_pitches = Pitch.query.filter_by(author = User.id).all()
+    get_pitches = Pitch.query.filter_by(writer = User.id).all()
     get_comments = Comment.query.filter_by(user_id = User.id).all()
     get_likes = Like.query.filter_by(user_id = User.id).all()
     get_dislikes = Dislike.query.filter_by(user_id = User.id).all()
@@ -69,6 +83,29 @@ def update_pic(uname):
         db.session.commit()
     return redirect(url_for('main.profile',uname=uname))
 
+@main.route('/',methods = ['GET', 'POST'])
+
+def index1():
+
+    '''
+    View root page function that returns the index page and its data
+    '''
+   
+
+    general = Pitch.query.filter_by(category="general").order_by(Pitch.posted.desc()).all()
+    project = Pitch.query.filter_by(category="project").order_by(Pitch.posted.desc()).all()
+    advertisement = Pitch.query.filter_by(category="advertisement").order_by(Pitch.posted.desc()).all()
+    sale = Pitch.query.filter_by(category="sale").order_by(Pitch.posted.desc()).all()
+
+    pitch = Pitch.query.filter_by().first()
+    likes = Like.get_all_likes(pitch_id=Pitch.id)
+    dislikes = Dislike.get_all_dislikes(pitch_id=Pitch.id)
+
+
+    title = 'Home - Welcome to The Pitch website'
+    return render_template('index.html', title = title, pitch = pitch, general = general, project = project, advertisement = advertisement, sale = sale, likes=likes, dislikes=dislikes)
+
+
 @main.route('/home', methods = ['GET', 'POST'])
 @login_required
 def index2():
@@ -90,13 +127,14 @@ def pitch():
     '''
     View pitch function that returns the pitch page and data
     '''
-    pitch_form = PitchForm()
+    form = PitchForm()
     likes = Like.query.filter_by(pitch_id=Pitch.id)
 
-    if pitch_form.validate_on_submit():
-        body = pitch_form.body.data
-        category = pitch_form.category.data
-        title = pitch_form.title.data
+    if form.validate_on_submit():
+        body = form.content.data
+        category = form.category.data
+        title = form.pitch_title.data
+        user = current_user._get_current_object()
 
         new_pitch = Pitch(title=title, body=body, category = category, user = current_user)
         new_pitch.save_pitch()
@@ -105,7 +143,7 @@ def pitch():
 
 
     title = 'New Pitch | One Minute Pitch'
-    return render_template('pitch.html', title = title, pitch_form = pitch_form, likes = likes)
+    return render_template('pitch.html', title = title, pitch_form = form, likes = likes)
 
 
 @main.route('/pitch/<int:pitch_id>/comment',methods = ['GET', 'POST'])
@@ -121,9 +159,9 @@ def comment(pitch_id):
         abort(404)
 
     if comment_form.validate_on_submit():
-        comment_body = comment_form.comment_body.data
+        comment_body = comment_form.comment_content.data
 
-        new_comment = Comment(comment=comment_body, pitch_id = pitch_id, user = current_user)
+        new_comment = Comment(comment_content=comment_body, pitch_id = pitch_id, user = current_user)
         new_comment.save_comment()
 
         return redirect(url_for('.comment', pitch_id=pitch_id))
@@ -297,3 +335,32 @@ def rating():
     votes = db.session.query(func.sum(Downvote.downvote)).scalar()
     votes = str(votes)
     return votes
+
+@main.route('/user/category/advertisements')
+@login_required
+def advertisements():
+    title = 'Advertisement'
+    posts = Advertisement.query.all()
+    return render_template("advert.html", posts=posts, title=title)
+
+
+@main.route('/user/category/projects')
+@login_required
+def projects():
+    title = 'Project'
+    posts = Project.query.all()
+    return render_template("proj.html", posts=posts, title=title)
+
+@main.route('/user/category/sales')
+@login_required
+def sales():
+    title = 'Sale'
+    posts = Sale.query.all()
+    return render_template("sal.html", posts=posts, title=title)
+
+@main.route('/user/categor/generals')
+@login_required
+def generals():
+    title = 'General'
+    posts = General.query.all()
+    return render_template("gen.html", posts=posts, title=title)

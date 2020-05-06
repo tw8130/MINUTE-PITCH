@@ -1,0 +1,35 @@
+{% extends 'base.html'%}
+{% import 'macros.html' as macro%}
+
+{% block styles%} 
+    {{ super() }}
+    <link href="https://fonts.googleapis.com/css?family=Akronim|Bellefair|Joti+One" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Aclonica"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}"> 
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container" style="font-family: Aclonica">
+
+    {% if current_user.is_authenticated%}
+        <h1>Hello {{current_user.username}}</h1>
+        <h3>Welcome to One Minute Pitch</h3>
+        <a class="btn btn-success" href="{{url_for('main.index')}}">Display pitches</a>
+        <div class="something">
+            {{macro.displayPitches(pitch)}}
+       </div>
+       <div class="something">
+        {{macro.displayPitches(general)}}
+       </div>
+
+
+    {% else %}
+        <h1>Hello stranger</h1>
+    {%endif%}
+
+
+</div>
+
+{% endblock%}

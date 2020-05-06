@@ -34,11 +34,11 @@ class User(UserMixin,db.Model):
 
     @password.setter
     def password(self, password):
-        self.pass_secure = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password)
 
 
     def verify_password(self,password):
-        return check_password_hash(self.pass_secure,password)
+        return check_password_hash(self.password_hash,password)
 
     def __repr__(self):
         return f'User {self.username}'
@@ -95,7 +95,7 @@ class Pitch(db.Model):
         '''
         Function that queries the databse and returns all the pitches
         '''
-        pitches = Pitch.query.order_by('-id').all()
+        pitches = Pitch.query.order_by('-posted').all()
         return pitches
 
 
@@ -139,6 +139,8 @@ class Comment(db.Model):
         comments = Comment.query.order_by('id').all()
         return comments
 
+  
+
 class Like (db.Model):
     __tablename__ = 'likes'
 
@@ -163,7 +165,7 @@ class Like (db.Model):
 
     @classmethod
     def get_all_likes(cls,pitch_id):
-        likes = Like.query.order_by('-id').all()
+        likes = len(Like.query.all())
         return likes
 
     def __repr__(self):
@@ -177,7 +179,7 @@ class Dislike (db.Model):
     pitch_id = db.Column(db.Integer,db.ForeignKey('pitches.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
-     def save_dislikes(self):
+    def save_dislikes(self):
         db.session.add(self)
         db.session.commit()
 
@@ -193,7 +195,7 @@ class Dislike (db.Model):
 
     @classmethod
     def get_all_dislikes(cls,pitch_id):
-        dislikes = Dislike.query.order_by('-id').all()
+        dislikes = len(Dislike.query.all())
         return dislikes
 
     def __repr__(self):

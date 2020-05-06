@@ -1,4 +1,3 @@
 virtual/
-*.pyc
-start.sh 
+*.pyc 
 .vscode
