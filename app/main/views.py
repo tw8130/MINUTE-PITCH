@@ -216,6 +216,7 @@ def advertisement():
     if form.validate_on_submit():
         post = form.post.data
         body = form.body.data
+
         new_advertisement = Advertisement(post=post, user=current_user, body=body)
         new_advertisement.save_advertisement()
         return redirect(url_for('.advertisements'))
